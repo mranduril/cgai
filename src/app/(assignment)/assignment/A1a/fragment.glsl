@@ -10,6 +10,7 @@ uniform vec2 iResolution;           //// screen resolution (uniform, from CPU)
 uniform float iTime;                //// time elapsed (uniform, from CPU)
 
 const vec3 CAM_POS = vec3(-0.35, 1.0, -3.0);
+float sdf2(vec3 p);
 
 /////////////////////////////////////////////////////
 //// sdf functions
