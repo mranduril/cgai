@@ -85,6 +85,16 @@ const assignments: { title: string; href: string; description: string }[] = [
     href: '/assignment/A2b_doc',
     description: 'A2b Document: Neural Radiance Fields',
   },
+  // {
+  //   title: 'Assignment 3 Demo',
+  //   href: '/assignment/A3',
+  //   description: 'A3 Demo: Gaussian Splatting',
+  // },
+  // {
+  //   title: 'Assignment 3 Doc',
+  //   href: '/assignment/A3_doc',
+  //   description: 'A3 Document: Gaussian Splatting',
+  // },
 ];
 
 export function NavBar() {

@@ -1,0 +1,206 @@
+<style>
+    /* Custom styles for headings */
+    .h1-custom {
+        font-size: 2.25rem; /* equivalent to text-4xl */
+        font-weight: 700; /* equivalent to font-bold */
+        margin-bottom: 1.5rem; /* equivalent to mb-6 */
+    }
+
+    .h2-custom {
+        font-size: 1.5rem; /* equivalent to text-2xl */
+        font-weight: 600; /* equivalent to font-semibold */
+        margin-top: 1.5rem; /* equivalent to mt-6 */
+        margin-bottom: 1rem; /* equivalent to mb-4 */
+    }
+
+    .h3-custom {
+        font-size: 1.25rem; /* equivalent to text-xl */
+        font-weight: 500; /* equivalent to font-medium */
+        margin-top: 1rem; /* equivalent to mt-4 */
+        margin-bottom: 0.5rem; /* equivalent to mb-2 */
+    }
+
+    .h4-custom {
+        font-size: 1.05rem; /* equivalent to text-xl */
+        font-weight: 500; /* equivalent to font-medium */
+        margin-top: 1rem; /* equivalent to mt-4 */
+        margin-bottom: 0.5rem; /* equivalent to mb-2 */
+    }
+
+    /* Styling for code elements */
+    .code-inline {
+        font-family: 'Fira Code', Consolas, 'Courier New', monospace;
+        font-size: 1.1rem;
+        font-weight: bold;
+    }
+
+    .link-inline {
+        text-decoration: underline;  /* Ensures the links are underlined */
+        color: #1d4ed8;              /* Sets the blue color for the links */
+        font-family: 'Fira Code', Consolas, 'Courier New', monospace;
+        font-size: 1.1rem;
+        font-weight: bold;
+    }
+
+    /* Fixing the problem with ul and li elements */
+    ul {
+        list-style-type: disc;  /* Ensures the default bullet style */
+        margin-left: 2rem;      /* Adds left indentation for the list */
+        padding-left: 1.5rem;   /* Adds extra padding inside the list */
+    }
+
+    li {
+        margin-bottom: 0.5rem; /* Adds space between list items */
+    }
+
+    .image-container {
+        display: flex; 
+        justify-content: center; /* Center images */
+        gap: 20px; /* Space between images */
+    }
+    .image-container img {
+        width: 50%; /* Adjust width */
+        height: auto; /* Maintain aspect ratio */
+    }
+
+    .image-container2 {
+        display: flex; 
+        justify-content: center; /* Center images */
+        gap: 20px; /* Space between images */
+    }
+    .image-container2 img {
+        width: 30%; /* Adjust width */
+        height: auto; /* Maintain aspect ratio */
+    }
+
+</style>
+
+<h1 class="h1-custom">
+    Assignment 3: Gaussian Splatting
+</h1>
+
+<p class="mb-4">
+    Welcome to our exploration of Gaussian Splatting! In this assignment, we'll be optimizing for 2D Gaussians to represent images, while building up the intuition that generalizes to 3D Gaussian Splatting.
+    In Part 1, we'll be targeting a "synthetic" image (originally reconstructed from Gaussians). In Part 2, we'll be optimizing for an actual target image. The main part of this project will be in Python using a Colab Jupyter Notebook. 
+    Then, you will fill in our implementation of a Gaussian GLSL shader and export your optimized parameters into it for visualization. Let's get started!
+</p>
+
+
+<h2 class="h2-custom">Reading</h2>
+<p class="mb-4">
+    Before diving into our code, you may refer to our course slides as well as the shadertoy links below for inspiration. Here is the reading list:
+</p>
+
+<ul class="list-disc pl-8 mb-4">
+    <li>Course Slides on Gaussian Splatting</li>
+    <li><a href="https://www.shadertoy.com/view/tflXRB" class="link-inline">Shadertoy Example: SplAinter</a></li>
+    <li><a href="https://www.shadertoy.com/view/4df3D8" class="link-inline">Shadertoy Example: Gaussian Splatting Example 1</a></li>
+    <li><a href="https://www.shadertoy.com/view/MdfGDH" class="link-inline">Shadertoy Example: Gaussian Splatting Example 2</a></li>
+    <li><a href="https://www.shadertoy.com/view/dtSfDD" class="link-inline">Shadertoy Example: Gaussian Splatting Example 3</a></li>
+    <li><a href="https://www.shadertoy.com/view/4XXSDN" class="link-inline">Shadertoy Example: Interpolated Daft Punk Splats</a></li>
+</ul>
+
+<h2 class="h2-custom">Starter Code</h2>
+<p class="mb-4">
+    Please visit the following GitHub repository to get our latest starter code: <a href="https://github.com/cg-gatech/cgai" class="link-inline">https://github.com/cg-gatech/cgai</a>. Make sure to run 'git pull' to synchronize the latest version. Make sure you can access the default CGAI web page after starting the npm server. 
+    The starter code for this assignment is located in the folder <code class="code-inline">src/app/(assignment)/assignment/A3</code>. This folder contains several files, including the main page <code class="code-inline">page.tsx</code>, the Jupyter notebook file <code class="code-inline">2DGS_A3_solution.ipynb</code>, and the GLSL shader 
+    <code class="code-inline">fragment.glsl</code>. Your implementation will focus on <code class="code-inline">2DGS_A3_solution.ipynb</code> and <code class="code-inline">fragment.glsl</code>.
+</p>
+
+<p class="mb-4">
+
+To view the default initial effect for this assignment, you can either use the navigation bar by clicking Assignments and then Assignment 3, or directly access the URL: <a href="http://localhost:3000/assignment/A3" class="link-inline">http://localhost:3000/assignment/A3</a> 
+(Note that the port number may vary depending on the available ports on your local computer). After successfully completing the setup, you should see a blank window.
+</p>
+
+<h2 class="h2-custom">Requirements</h2>
+<p class="mb-4">
+    For this assignment, you are expected to optimize two components to reconstruct both a "synthetic" and a real target image: <em>create 2D gaussians</em>, <em>optimize gaussians on a "synthetic" image</em>, <em>optimize gaussians on an image of your choice</em>, and <em>render optimized gaussians</em>. 
+    We will briefly discuss each step as follows, but more information and equation explanations can be found in the Jupyter notebook file <code class="code-inline">2DGS_A3_solution.ipynb</code>, along with your starter code.
+</p>
+
+<h3 class="h3-custom">Step 0: Create 2D gaussians</h3>
+<p class="mb-4">
+    You are tasked to write some of the necessary building blocks for creating the 2D gaussian representation required for gaussian splatting. These components include the rotation matrix R and 
+    the diagonal inverse scaling matrix D for each gaussian, as well as the final color field for the image (essentially the sum of the contributions of each Gaussian).
+</p>
+
+<h3 class="h3-custom">Step 1: Optimize for Synthetic Ground Truth</h3>
+<p class="mb-4">
+    You are tasked to create your own unique and creative synthetic target image based on the simplistic synthetic image we have provided. Feel free to hange the number of Gaussians, 
+    just make sure to have the same number of colors, positions, scales, and rotations defined in each tensor (i.e. match their first dimension). <b>REMEMBER to answer the reflection question 
+    at the end of section 1.2 about the initial gaussian image pre-optimization. </b> Finally, use your knowledge of optimization and loss functions from prior projects to fill in the gaps within 
+    the gaussian splatting optimization process.
+
+    Once you have implemented this step, you should be able to observe the optimization process for the "synthetic" image as shown in the video below. 
+</p>
+
+<video controls autoplay loop muted>
+    <source src="/assignments/A3_img/anim-synthetic.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+</video>
+
+<h3 class="h3-custom">Step 2: Optimize for Target Image</h3>
+<p class="mb-4">
+    Here, you are asked to once again use your knowledge of optimization and loss functions from prior projects to fill in the gaps within 
+    the gaussian splatting optimization process. Additionally, as part of our creative expression section, after you test with our sample image (The Mona Lisa), 
+    add your own target image and optimize a new set of gaussians for your chosen target image.
+
+    Once you have implemented this step, you should be able to observe the optimization process for the provided target image as shown in the video below. 
+</p>
+
+<video controls autoplay loop muted>
+    <source src="/assignments/A3_img/anim-image.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+</video>
+
+
+<h3 class="h3-custom">Step 3: Render Optimized Gaussians</h3>
+<p class="mb-4">
+    In this step, you must copy your generated Gaussian parameters for the target image and fill in the gaps in the <code class="code-inline">fragment.glsl</code> file to accurately show the list of gaussians. 
+    Your code will include building the inverse covariance matrix needed to place Gaussians in the scene and calculating the contribution of each Gaussian to the overall image field. This way, you can see your target gaussian splatting image on the class website.
+</p>
+    
+<br>
+Once you finish implementation of Step 1 - 2.3 with the Mona Lisa image, you should see the image shown below:
+
+<div class="image-container">
+    <img src="/assignments/A3_img/a3-ref.png" alt="Optimized Mona Lisa Output">
+</div>
+
+<h2 class="h2-custom">Creative Expression</h2>
+In the Creative Expression section of this assignment, you are encouraged to create both your own "synthethic" gaussian splatting scene and your own target image gaussian splatting scene. 
+While your "synthetic" scene must be made by initializing your own set of unique gaussians, you may choose to utilize a target image that you find online or one that you create yourself. 
+You are encouraged to play with the default parameters in the optimization model (ex. number of gaussians, learning rate, etc.) to see how these changes can impact your final result. 
+
+We expect your Creative Expression gaussian splatting scenes to demonstrate how gaussians can be used to represent complex scenes. The creative expression theme for this assignment is <strong>Artistic Effects</strong>.
+
+<h2 class="h2-custom">Submission</h2>
+<ul class="list-disc pl-8 mb-4">
+    <li>Your source code <code class="code-inline">2DGS_A3_solution.ipynb</code> and <code class="code-inline">fragment.glsl</code></li>
+    <li>Your creative "synthetic" gaussian splat image/video in the same format as the Mona Lisa image above</li>
+    <li>Your creative target gaussian splat image/video in the same format as the Mona Lisa image above</li>
+    <li>The answer to Reflection Question 1 from the Jupyter Notebook and a concise technical explanation of your implementation</li>
+</ul>
+
+
+<h2 class="h2-custom">Grading</h2>
+<p>This assignment is worth a total of 8 points, with the grading criteria outlined as follows:</p>
+<ul class="list-disc pl-8 mb-4">
+    <li>
+        <strong>Technical Contribution (7 points):</strong> The core of the grading is based on the correct implementation of the 2D gaussian creation and the two optimization loops for both the "synthetic" and target scenes. The distribution of points is as follows:
+        <ul class="list-disc pl-8 mb-4">
+            <li>Step 0: 1 point </li>
+            <li>Step 1: 2 points </li>
+            <li>Step 2: 2 points </li>            
+            <li>Step 3: 2 points </li>
+
+        </ul>
+    </li>
+    <li>
+        <strong>Creative Expression (1 point):</strong> This aspect focuses on your ability to create and optimize for novel and unique gaussian-based scenes.
+    </li>
+</ul>
+
+<h2 class="h2-custom">Sharing Your Work</h2>
+<p>You are encouraged to share your graphical work with the class. If you want to do so, please upload your image to the Ed Discussion post <strong>A3 Gallery: Artistic Effects</strong>. This is an excellent opportunity to engage with your peers and gain recognition for your work. Share with us the nebulous world you create!</p>
