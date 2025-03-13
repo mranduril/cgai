@@ -38,7 +38,8 @@ vec3 palette(in float t)
   vec3 c = vec3(1.0, 1.0, 1.0);
   vec3 d = vec3(0.0, 0.10, 0.20);
 
-  return a + b * cos(6.28318 * (c * t + d));
+//   return a + b * cos(6.28318 * (c * t + d));
+  return a + b * sin(6.28318 * (c * t + d));
 }
 
 /////////////////////////////////////////////////////
@@ -72,13 +73,18 @@ float sdBox(vec3 p, vec3 b)
 vec4 readSDFVolume(vec3 p)
 {
     //// sdf object
-    float distance = sdSphere(p, 1.0); 
+    float distance = sdSphere(p, 1.0);
+    float distance2 = sdSphere(vec3(p.x - 1.0, p.y - 1.0, p.z - 1.0), 0.3);
 
     //// convert sdf value to a color
-
+    vec3 color = palette(-distance) + palette(-distance2);
+    if (distance < 0.0 || distance2 < 0.0) {
+        return vec4(color, 1.0);
+    }
+    return vec4(color, 0.0);
     //// your implementation starts
 
-    return vec4(0.0, 0.0, 0.0, 0.0);
+    // return vec4(0.0, 0.0, 0.0, 0.0);
 
     //// your implementation ends
 }
@@ -103,8 +109,9 @@ vec4 readCTVolume(vec3 p)
     }
 
     //// your implementation starts
-
-    return vec4(0.0, 0.0, 0.0, 0.0);
+    float density = texture(iVolume, tex_coord).r;
+    vec3 color = palette(density);
+    return vec4(color, density) * 2.0;
 
     //// your implementation ends
 }
@@ -133,7 +140,11 @@ vec4 volumeRendering(vec3 ro, vec3 rd, float near, float far, int n_samples)
         vec3 p = ro + t * rd;                                                   //// sample position on the ray
 
         //// your implementation starts
-
+        vec4 color_sdf = readSDFVolume(vec3(p.x - 2.0, p.y, p.z));
+        vec4 color_ct = readCTVolume(vec3(p.x + 2.0, p.y, p.z));
+        vec4 color_sum = color_sdf + color_ct;
+        color += transmittance * (1.0 - exp(color_sum.a * -stepSize)) * color_sum.rgb;
+        transmittance *= exp(-color_sum.a * stepSize);
 
         //// your implementation ends
 

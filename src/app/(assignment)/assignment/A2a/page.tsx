@@ -51,7 +51,7 @@ export default function TestPage() {
   const [volumeData, setVolumeData] = useState<Uint8Array | null>(null);
   useEffect(() => {
     // Define the fixed path to the file
-    const fixedPath = '/foot_256x256x256_uint8.raw'; // Replace with the actual path
+    const fixedPath = '/aneurism_256x256x256_uint8.raw'; // Replace with the actual path
 
     const fetchVolumeData = async () => {
       try {
