@@ -68,6 +68,9 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord)
         color = vec3(1.0, 1.0, 1.0);
     }
 
+    // Animate the Gaussian centers
+    uv += smoothstep(0.0, 1.0, cos(iTime)) * cos(iTime + 100.0 * uv.xy) * 3.;
+
     for (int i = 0; i < NUM_GAUSSIANS; ++i) {
         vec2 center = gauss_centers[i];
         vec2 scale = gauss_sigmas[i];
